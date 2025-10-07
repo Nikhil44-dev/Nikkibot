@@ -1,50 +1,678 @@
-<!DOCTYP<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Website Name</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math Challenger | Professional Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+
+<style>
+/* --- RESET & GLOBAL --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Inter", sans-serif;
+  background: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+/* --- COLORS --- */
+:root {
+  --color-primary: #4f46e5;
+  --color-primary-dark: #4338ca;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-bg: #f3f4f6;
+  --color-white: #ffffff;
+  --color-text-dark: #1f2937;
+  --color-text-light: #6b7280;
+}
+
+/* --- CARD CONTAINER --- */
+#app-container {
+  width: 100%;
+  max-width: 480px;
+  background-color: #e0e0e0;
+            box-shadow: 
+                10px 10px 20px #bebebe,
+                -10px -10px 20px #ffffff;
+  padding: 40px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* --- TYPOGRAPHY --- */
+h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+p {
+  color: var(--color-text-light);
+}
+
+/* --- BUTTONS --- */
+button {
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  width: 100%;
+}
+button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+button:active {
+  transform: translateY(0);
+}
+
+/* --- OPERATION GRID --- */
+.operation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.operation-button {
+  background: #fff;
+  border: 2px solid #e0e7ff;
+  color: var(--color-primary);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.operation-button:hover {
+  background: #eef2ff;
+  border-color: var(--color-primary);
+}
+.operation-button span:first-child {
+  font-size: 2.25rem;
+  margin-bottom: 0.3rem;
+}
+
+/* --- QUESTION BOX --- */
+.question-box {
+  background: #e0e7ff;
+  padding: 28px;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border: 3px solid var(--color-primary);
+}
+.question-box .label {
+  font-size: 1rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 6px;
+}
+.question-box .expression {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  word-break: break-word;
+}
+
+/* --- OPTIONS --- */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.option-button {
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 10px;
+}
+.option-button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+/* --- FEEDBACK --- */
+.correct-answer {
+  background: var(--color-success) !important;
+  border: 3px solid #059669;
+}
+.incorrect-answer {
+  background: var(--color-danger) !important;
+  border: 3px solid #dc2626;
+}
+
+/* --- PROGRESS BAR --- */
+.progress-container {
+  width: 100%;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  height: 10px;
+  margin: 10px 0 24px;
+}
+.progress-bar {
+  background: var(--color-primary);
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+/* --- RESULTS BOX --- */
+.results-box {
+  padding: 28px;
+  border: 4px solid #93c5fd;
+  border-radius: 12px;
+  background: #eff6ff;
+  text-align: center;
+}
+.results-box .icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+.results-box .score-text {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+.play-again-button {
+  background: var(--color-primary);
+  color: #fff;
+  margin-top: 24px;
+  font-size: 1.125rem;
+}
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 600px) {
+  #app-container {
+    padding: 20px 16px;
+    border-radius: 30px;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  .question-box {
+    padding: 20px;
+  }
+  .question-box .expression {
+    font-size: 2.2rem;
+  }
+  .operation-grid {
+    grid-template-columns: 1fr;
+  }
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+  .operation-button {
+    padding: 18px 12px;
+    font-size: 1rem;
+  }
+  button {
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+  }
+}
+</style>
 </head>
 <body>
 
-  <!-- Dynamic Header -->
-  <header>
-    <h1>nikki_bot</h1>
-  </header>
+<div id="app-container"></div>
 
-  <!-- Circular Image and Text Section -->
-  <section class="image-text">
-    <div class="circle-img">
-      <img src="your-image.jpg" alt="Your Image">
-    </div>
-    <div class="text-content">
-      <p>this site in mentietion</p>
-    </div>
-  </section>
+<script>
+    // --- Global State Management ---
+    const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'default-quiz-app';
+    const appContainer = document.getElementById('app-container');
 
-  <!-- Footer with Contact Info -->
-  <footer>
-    <div class="contact-links">
-      <a href="https://t.me/yourtelegram">Telegram</a>
-      <a href="https://www.instagram.com/yourinsta">Instagram</a>
-      <a href="https://www.facebook.com/yourfb">Facebook</a>
-    </div>
+    const state = {
+        currentStage: 'selection', // 'selection', 'quiz', 'results'
+        selectedOperation: null,   // 'add', 'subtract', 'multiply', 'divide'
+        questions: [],
+        currentQuestionIndex: 0,
+        score: 0,
+        totalQuestions: 5,
+        isAwaitingAnswer: true, // Flag to prevent multiple clicks
+        operationSymbols: {
+            'add': '+',
+            'subtract': '-',
+            'multiply': '×',
+            'divide': '÷'
+        },
+        operationTitles: {
+            'add': 'Addition (Sum)',
+            'subtract': 'Subtraction',
+            'multiply': 'Multiplication',
+            'divide': 'Division'
+        }
+    };
 
-    <!-- Terms and Conditions Button -->
-    <button id="termsBtn">Terms and Conditions</button>
-  </footer>
+    // --- Utility Functions ---
 
-  <!-- Terms and Conditions Modal -->
-  <div id="termsModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="closeBtn">&times;</span>
-      <h2>Terms and Conditions</h2>
-      <p>Insert your terms and conditions here. Make it clear and mandatory for the user to accept.</p>
-      <button id="acceptBtn">Accept</button>
-    </div>
-  </div>
+    /**
+     * Generates a random integer within a range.
+     */
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-  <script src="script.js"></script>
+    /**
+     * Shuffles an array in place (Fisher-Yates algorithm).
+     */
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    /**
+     * Generates a unique set of 3 incorrect options around the correct answer.
+     */
+    function generateIncorrectOptions(correctAnswer) {
+        const incorrects = new Set();
+        const range = Math.max(5, Math.ceil(Math.abs(correctAnswer) * 0.25)); // Dynamic range
+        let attempts = 0;
+
+        while (incorrects.size < 3 && attempts < 20) {
+            attempts++;
+            let delta = getRandomInt(-range, range);
+            if (delta === 0) continue; 
+            if (delta > 0 && delta <= 3) delta += 3; 
+
+            let option = Math.round(correctAnswer + delta);
+
+            if (option !== correctAnswer && !incorrects.has(option)) {
+                if (correctAnswer > 10 && option < 0) continue;
+                incorrects.add(option);
+            }
+        }
+
+        // Fallback: Use larger, fixed offsets if necessary
+        while (incorrects.size < 3) {
+            let fallbackOption = Math.round(correctAnswer + (incorrects.size % 2 === 0 ? 10 + incorrects.size : -(10 + incorrects.size)));
+            if (fallbackOption !== correctAnswer && !incorrects.has(fallbackOption)) {
+                incorrects.add(fallbackOption);
+            }
+        }
+
+        return Array.from(incorrects);
+    }
+
+    /**
+     * Generates the quiz questions based on the selected operation.
+     */
+    function generateQuestions(operation) {
+        const questions = [];
+        // Adjust maximum values for difficulty
+        const maxVal = operation === 'multiply' ? 12 : 50;
+        const minVal = 1;
+
+        for (let i = 0; i < state.totalQuestions; i++) {
+            let a, b, correctAnswer, questionText;
+
+            if (operation === 'divide') {
+                // Ensure integer result and positive operands
+                let c = getRandomInt(2, 10); // Answer (2-10)
+                b = getRandomInt(2, 10); // Divisor (2-10)
+                a = c * b; // Dividend
+                correctAnswer = c;
+            } else if (operation === 'subtract') {
+                // Ensure positive result and reasonably sized numbers
+                a = getRandomInt(15, maxVal);
+                b = getRandomInt(5, a - 5);
+                correctAnswer = a - b;
+            } else if (operation === 'multiply') {
+                a = getRandomInt(1, maxVal);
+                b = getRandomInt(1, 10); // Keep multiplier small
+                correctAnswer = a * b;
+            } else { // 'add'
+                a = getRandomInt(1, maxVal);
+                b = getRandomInt(1, maxVal);
+                correctAnswer = a + b;
+            }
+
+            questionText = `${a} ${state.operationSymbols[operation]} ${b}`;
+
+            const incorrectOptions = generateIncorrectOptions(correctAnswer);
+            const options = [correctAnswer, ...incorrectOptions];
+            shuffleArray(options);
+
+            questions.push({
+                text: questionText,
+                options: options,
+                correctAnswer: correctAnswer,
+                correctIndex: options.indexOf(correctAnswer)
+            });
+        }
+        state.questions = questions;
+    }
+
+    // --- Stage Transitions ---
+
+    function startQuiz(operation) {
+        state.selectedOperation = operation;
+        state.currentQuestionIndex = 0;
+        state.score = 0;
+        state.currentStage = 'quiz';
+        state.isAwaitingAnswer = true;
+        generateQuestions(operation);
+        renderApp();
+    }
+
+    function checkAnswer(selectedIndex, clickedButton) {
+        if (!state.isAwaitingAnswer) return;
+
+        state.isAwaitingAnswer = false;
+        const currentQ = state.questions[state.currentQuestionIndex];
+        const isCorrect = (selectedIndex === currentQ.correctIndex);
+
+        // Highlight buttons
+        const optionButtons = Array.from(document.querySelectorAll('.option-button'));
+        optionButtons.forEach((btn, index) => {
+            btn.disabled = true; // Disable all buttons
+            if (index === currentQ.correctIndex) {
+                // Correct answer is always highlighted green
+                btn.classList.add('correct-answer');
+            } else if (index === selectedIndex) {
+                // User's incorrect choice is highlighted red
+                btn.classList.add('incorrect-answer');
+            }
+        });
+
+        if (isCorrect) {
+            state.score++;
+        }
+
+        // Wait a short time before moving to the next question or results
+        setTimeout(() => {
+            state.currentQuestionIndex++;
+            state.isAwaitingAnswer = true;
+            if (state.currentQuestionIndex >= state.totalQuestions) {
+                state.currentStage = 'results';
+            }
+            renderApp();
+        }, 1500);
+    }
+
+    function resetGame() {
+        state.currentStage = 'selection';
+        state.selectedOperation = null;
+        state.questions = [];
+        state.currentQuestionIndex = 0;
+        state.score = 0;
+        state.isAwaitingAnswer = true;
+        renderApp();
+    }
+
+    // --- Rendering Functions ---
+
+    function renderSelection() {
+        const title = 'Math Challenger';
+        const subtitle = 'Select an operation to start the 5-question quiz.';
+        const operations = [
+            { key: 'add', label: 'Sum (Addition)', icon: state.operationSymbols['add'] },
+            { key: 'subtract', label: 'Subtraction', icon: state.operationSymbols['subtract'] },
+            { key: 'multiply', label: 'Multiplication', icon: state.operationSymbols['multiply'] },
+            { key: 'divide', label: 'Division', icon: state.operationSymbols['divide'] }
+        ];
+
+        appContainer.innerHTML = `
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1>${title}</h1>
+                <p style="color: var(--color-text-light);">${subtitle}</p>
+            </div>
+            <div class="operation-grid">
+                ${operations.map(op => `
+                    <button class="operation-button" onclick="startQuiz('${op.key}')">
+                        <span>${op.icon}</span>
+                        <span>${op.label}</span>
+                    </button>
+                `).join('')}
+            </div>
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.875rem; color: #9ca3af;">Quiz will have ${state.totalQuestions} questions.</p>
+        `;
+    }
+
+    function renderQuiz() {
+        const index = state.currentQuestionIndex;
+        const currentQ = state.questions[index];
+        const progress = `${index + 1} / ${state.totalQuestions}`;
+        const operationTitle = state.operationTitles[state.selectedOperation];
+        const progressPercent = ((index) / state.totalQuestions) * 100;
+
+        appContainer.innerHTML = `
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="color: var(--color-text-dark);">${operationTitle} Challenge</h2>
+                <div style="font-size: 0.875rem; font-weight: 500; color: var(--color-primary); margin-top: 8px;">Question ${progress}</div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: ${progressPercent}%"></div>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <p class="label">What is the result of:</p>
+                <h3 class="expression">${currentQ.text} = ?</h3>
+            </div>
+
+            <div class="options-grid">
+                ${currentQ.options.map((option, i) => `
+                    <button class="option-button" onclick="checkAnswer(${i}, this)">
+                        ${option}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    function renderResults() {
+    // --- 🔹 Step 1: Adsterra ad show karna ---
+    showAdBeforeResults(() => {
+        // --- 🔹 Step 2: Ad close hone ke baad result dikhana ---
+        const percentage = Math.round((state.score / state.totalQuestions) * 100);
+        const operationTitle = state.operationTitles[state.selectedOperation];
+
+        let message, icon, iconColor, borderColor;
+
+        if (percentage === 100) {
+            message = 'Perfect Score! You are a Math Master!';
+            icon = '🎉';
+            iconColor = '#10b981';
+            borderColor = '#34d399';
+        } else if (percentage >= 60) {
+            message = 'Excellent work! Keep practicing!';
+            icon = '🏆';
+            iconColor = '#3b82f6';
+            borderColor = '#60a5fa';
+        } else {
+            message = 'Great effort! You can do better.';
+            icon = '📚';
+            iconColor = '#fcd34d';
+            borderColor = '#fde047';
+        }
+
+        appContainer.innerHTML = `
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1>Quiz Complete!</h1>
+                <p>Your score for the ${operationTitle} challenge.</p>
+            </div>
+
+            <div class="results-box" style="border-color: ${borderColor}; background-color: #f7f9fc;">
+                <div class="icon" style="color: ${iconColor};">${icon}</div>
+                <h3>${message}</h3>
+                <p class="score-text">${state.score} / ${state.totalQuestions}</p>
+                <p style="font-size: 1.125rem;">${percentage}% Accuracy</p>
+            </div>
+
+            <button onclick="resetGame()" class="play-again-button">
+                Play Again
+            </button>
+        `;
+    });
+}
+
+/** 🔸 Ye function ad load karega aur result callback ke baad show karega **/
+function showAdBeforeResults(callback) {
+  // --- Prevent double overlay ---
+  if (document.getElementById("ad-overlay")) return;
+
+  // 🔹 Random ad URL selection (add as many as you want)
+  const adLinks = [
+    "https://www.revenuecpmgate.com/uh302s58t?key=f59877d5cca062c3f7845e6996479edc",
+    "https://otieu.com/4/10003994"
+  ];
+  const randomAd = adLinks[Math.floor(Math.random() * adLinks.length)];
+
+  // 🔹 Push dummy state to prevent unwanted back navigation
+  history.pushState({ adShowing: true }, "", window.location.href);
+
+  // --- Create fullscreen overlay ---
+  const overlay = document.createElement("div");
+  overlay.id = "ad-overlay";
+  Object.assign(overlay.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "#000",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: "999999",
+    overflow: "hidden",
+    transition: "opacity 0.3s ease"
+  });
+
+  // --- Ad iframe ---
+  const iframe = document.createElement("iframe");
+  iframe.src = randomAd;
+  Object.assign(iframe.style, {
+    width: "100%",
+    height: "100%",
+    border: "none",
+    background: "#000"
+  });
+  overlay.appendChild(iframe);
+
+  // --- Skip button (small top-right corner) ---
+  const skipBtn = document.createElement("button");
+  skipBtn.textContent = "Skip Ad (7)";
+  skipBtn.disabled = true;
+  Object.assign(skipBtn.style, {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    width: "auto",
+    padding: "6px 10px",
+    fontSize: "13px",
+    fontWeight: "600",
+    background: "rgba(255, 255, 255, 0.25)",
+    color: "#fff",
+    border: "1px solid rgba(255,255,255,0.3)",
+    borderRadius: "6px",
+    cursor: "not-allowed",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(6px)"
+  });
+  overlay.appendChild(skipBtn);
+
+  document.body.appendChild(overlay);
+
+  // --- Countdown timer for skip button ---
+  let timeLeft = 7;
+  const timer = setInterval(() => {
+    timeLeft--;
+    skipBtn.textContent = `Skip Ad (${timeLeft})`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      skipBtn.textContent = "✖ Skip Ad";
+      skipBtn.style.background = "rgba(16,185,129,0.85)";
+      skipBtn.style.cursor = "pointer";
+      skipBtn.disabled = false;
+      skipBtn.style.border = "none";
+    }
+  }, 1000);
+
+  // --- Close ad function ---
+  const closeAd = () => {
+    overlay.style.opacity = "0";
+    setTimeout(() => {
+      document.body.removeChild(overlay);
+      // Remove dummy history entry safely
+      if (window.history.state && window.history.state.adShowing) {
+        history.back();
+      }
+      callback();
+    }, 300);
+  };
+
+  // --- Skip button action ---
+  skipBtn.addEventListener("click", () => {
+    if (timeLeft <= 0) closeAd();
+  });
+
+  // --- Handle browser back button ---
+  window.onpopstate = (event) => {
+    if (event.state && event.state.adShowing) {
+      closeAd();
+    }
+  };
+}
+
+    /**
+     * Main render function that updates the UI based on the current stage.
+     */
+    function renderApp() {
+        appContainer.style.opacity = 0;
+        setTimeout(() => {
+            switch (state.currentStage) {
+                case 'selection':
+                    renderSelection();
+                    break;
+                case 'quiz':
+                    renderQuiz();
+                    break;
+                case 'results':
+                    renderResults();
+                    break;
+                default:
+                    renderSelection();
+            }
+            appContainer.style.opacity = 1;
+        }, 100);
+    }
+
+    // Expose functions to the global scope for use in inline HTML handlers
+    window.startQuiz = startQuiz;
+    window.checkAnswer = checkAnswer;
+    window.resetGame = resetGame;
+
+    // Initial render
+    renderApp();
+
+</script>
+
 </body>
-</html>￼Enter
+</html>
+
+  
